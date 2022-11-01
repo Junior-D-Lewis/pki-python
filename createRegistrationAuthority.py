@@ -1,0 +1,3 @@
+
+def createRegistrationAuthority():
+    print('createRegistrationAuthority')
