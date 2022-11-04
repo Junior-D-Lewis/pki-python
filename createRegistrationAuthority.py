@@ -1,3 +1,0 @@
-
-def createRegistrationAuthority():
-    print('createRegistrationAuthority')
