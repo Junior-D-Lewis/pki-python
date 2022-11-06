@@ -2,9 +2,9 @@ from cryptography.hazmat.primitives import hashes
 from register_CA.ae import register_authority
 from root_CA.ca import sign_certificate
 
+#Main, c'est dans cette fonction qu'il y aura des inter-act
 if __name__ == '__main__':
     commonName = input("veuillez saisir votre  nom ? : ")
-    organizationName = input("veuillez saisir  le nom de l'organisation du certification? : ")
     organizationUnitName = input("veuillez saisir le nom de l'unité organisation ? ")
     hash_algo = int(input("Veuillez saisir quel algo de chiffrement et se signature a utiliser :"
                      "\nTaper 0 pour SHA256\n"
@@ -24,7 +24,7 @@ if __name__ == '__main__':
                      "Taper 14 pour MD5\n"
                      "Taper 15 pour SHAKE256\n"))
 
-    unsigned_certificate = register_authority(commonName, organizationName, organizationUnitName)
-    sign_certificate(unsigned_certificate, hash_algo, "user_Certificate/"+organizationName)
+    unsigned_certificate = register_authority(commonName, organizationUnitName)
+    sign_certificate(unsigned_certificate, hash_algo, "user_Certificate/"+organizationUnitName)
 
 

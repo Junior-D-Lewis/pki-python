@@ -32,8 +32,9 @@ else:
             format=serialization.PublicFormat.SubjectPublicKeyInfo
         ))
 
+
 def sign_certificate(cert: CertificateBuilder, hash_algo: int, name: str):
-    path = "../Crypto/"+name+"_certificate.crt"
+    path = "../Crypto/" + name + "_certificate.crt"
     match hash_algo:
         case 0:
             h = hashes.SHA256()
@@ -69,6 +70,7 @@ def sign_certificate(cert: CertificateBuilder, hash_algo: int, name: str):
             h = hashes.SHAKE256()
         case _:
             h = hashes.SHA256()
+
     certificate_final = cert.sign(
         private_key=ca_private_key, algorithm=h,
         backend=default_backend()
@@ -82,8 +84,15 @@ def sign_certificate(cert: CertificateBuilder, hash_algo: int, name: str):
 
 def authority_root():
 
-    unsigned_ca_certificate = generator.generate_cert("ca","esiea","groupe-esiea",ca_public_key)
-    sign_certificate(unsigned_ca_certificate, 0, "/root_CA/ca")
+    #Nous verifions s'il existe un certificat pour notre auorité racine
+    if os.path.exists("ca_certificate.crt"):
+        print("Ce certificat existe déjà")
+    #S'il n'en possède pas, on le lui génère et on le signe
+    else:
+        unsigned_ca_certificate = generator.generate_cert("ca", "esiea", ca_public_key)
+        sign_certificate(unsigned_ca_certificate, 0, "/root_CA/ca")
+
+    #on enregistre ensuite sa clé privé dans un ficier
     with open("../Crypto/root_CA/ca_private_key.key", "wb") as f:
         f.write(ca_private_key.private_bytes(
             encoding=serialization.Encoding.PEM,
@@ -91,6 +100,5 @@ def authority_root():
             encryption_algorithm=serialization.BestAvailableEncryption(b"openstack-ansible")
         ))
 
+
 authority_root()
-
-

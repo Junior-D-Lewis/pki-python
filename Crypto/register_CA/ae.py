@@ -9,10 +9,13 @@ import uuid
 
 from Crypto.generator import generator
 
-
-def register_authority(CommonName: str, OrganizationName: str,
-                       OrganizationUnitName: str) -> CertificateBuilder:
-    path = "../Crypto/user_Key/" + OrganizationName + "_private.key"
+#Création de notre autorité d'enregistrement
+#Elle aura pour but de génerer les clés privées et publique de l'utilisateur, lui envoyer
+#sa clé privé et créer un certificat qui sera signé par la CA.
+#Nous tenons a noté que dans le projet il est dit que c'est l'autorité d'enregistrement qui crée les
+#certificats et l'autorité racine les signe.
+def register_authority(CommonName: str, OrganizationUnitName: str) -> CertificateBuilder:
+    path = "../Crypto/user_Key/" + CommonName + "_private.key"
     private_key = rsa.generate_private_key(
         public_exponent=65537,
         key_size=2048,
@@ -28,7 +31,7 @@ def register_authority(CommonName: str, OrganizationName: str,
             encryption_algorithm=serialization.BestAvailableEncryption(b"openstack-ansible")
         ))
 
-    unsigned_certificate = generator.generate_cert(CommonName,OrganizationName,OrganizationUnitName,public_key)
+    unsigned_certificate = generator.generate_cert(CommonName,OrganizationUnitName,public_key)
 
     return  unsigned_certificate
 
