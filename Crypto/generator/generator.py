@@ -19,6 +19,7 @@ def generate_cert(CommonName: str,OrganizationUnitName: str, public_key: RSAPubl
         x509.NameAttribute(NameOID.ORGANIZATION_NAME, OrganizationName),
         x509.NameAttribute(NameOID.ORGANIZATIONAL_UNIT_NAME, OrganizationUnitName),
     ]))
+
     builder = builder.issuer_name(x509.Name([
         x509.NameAttribute(NameOID.COMMON_NAME, OrganizationName),
     ]))

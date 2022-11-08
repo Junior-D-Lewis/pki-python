@@ -1,4 +1,5 @@
 import os.path
+import pathlib
 
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
@@ -75,6 +76,17 @@ def sign_certificate(cert: CertificateBuilder, hash_algo: int, name: str):
         private_key=ca_private_key, algorithm=h,
         backend=default_backend()
     )
+
+    # convertion  du certicat en PEM
+    cert = x509.load_pem_x509_certificate(certificate_final.public_bytes())
+    # verification du certificat
+    trust_store = x509.Certificate.FileSystemCertificateStore(location=pathlib.Path("certificates/authenticode/"), trusted=True)
+    context = x509.VerificationContext(trust_store)
+    with open("certificate.pem", "rb") as f :
+        to_verify1 = x509.Certificate.from_pem(f.read())
+
+    #ecriture de la clé public en PEM dans un fichier
+
     with open(path, "wb") as f:
         f.write(certificate_final.public_bytes(
             encoding=serialization.Encoding.PEM,
