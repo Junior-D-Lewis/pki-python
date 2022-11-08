@@ -23,6 +23,7 @@ def generate_cert(CommonName: str,OrganizationUnitName: str, public_key: RSAPubl
     builder = builder.issuer_name(x509.Name([
         x509.NameAttribute(NameOID.COMMON_NAME, OrganizationName),
     ]))
+
     builder = builder.not_valid_before(datetime.datetime.today() - one_day)
     builder = builder.not_valid_after(datetime.datetime(2023, 8, 2))
     builder = builder.serial_number(int(uuid.uuid4()))

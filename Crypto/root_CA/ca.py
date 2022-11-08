@@ -27,12 +27,27 @@ else:
     )
     # génération de la public  key de CA root
     ca_public_key = ca_private_key.public_key()
+
     with open("../Crypto/root_CA/ca_public_key.key", "wb") as f:
         f.write(ca_public_key.public_bytes(
             encoding=serialization.Encoding.PEM,
             format=serialization.PublicFormat.SubjectPublicKeyInfo
         ))
 
+def test_Date_Validity():
+    name = input("Please enter your organization name: ")
+    path = "../Crypto/user_Certificate/" + name + "_certificate.crt"
+    # Tout d'abord on verifie qu'il existe un certificat au non de l'organisation de l'utilisateur
+    if os.path.exists(path):
+        with open(path, "r", encoding="utf-8") as file:
+           cert = x509.load_pem_x509_certificate(str.encode(file.read()))
+
+        # vérification de la validité temporelle du certificat
+        print(f"Certificate: {path}\n")
+        if datetime.date.today() > cert.not_valid_after:
+            print("Certificat  n'est pas valide")
+        if datetime.date.today() < cert.not_valid_before:
+            print("Certificat est valide")
 
 def sign_certificate(cert: CertificateBuilder, hash_algo: int, name: str):
     path = "../Crypto/" + name + "_certificate.crt"
@@ -77,15 +92,8 @@ def sign_certificate(cert: CertificateBuilder, hash_algo: int, name: str):
         backend=default_backend()
     )
 
-    # convertion  du certicat en PEM
-    cert = x509.load_pem_x509_certificate(certificate_final.public_bytes())
-    # verification du certificat
-    trust_store = x509.Certificate.FileSystemCertificateStore(location=pathlib.Path("certificates/authenticode/"), trusted=True)
-    context = x509.VerificationContext(trust_store)
-    with open("certificate.pem", "rb") as f :
-        to_verify1 = x509.Certificate.from_pem(f.read())
 
-    #ecriture de la clé public en PEM dans un fichier
+    #ecriture de certificatz en PEM dans un fichier
 
     with open(path, "wb") as f:
         f.write(certificate_final.public_bytes(
